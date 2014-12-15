@@ -32,10 +32,8 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -160,6 +158,9 @@ public class RippleView extends RelativeLayout
         {
             if (DURATION <= timer * FRAME_RATE)
             {
+                if(mAnimationListener != null) {
+                    mAnimationListener.onAnimationEnd();
+                }
                 animationRunning = false;
                 timer = 0;
                 durationEmpty = -1;
@@ -246,9 +247,6 @@ public class RippleView extends RelativeLayout
             }
 
             animationRunning = true;
-            if(mAnimationListener != null) {
-                new AnimationListenerAsyncTask().execute();
-            }
 
             if (rippleType == 1 && originBitmap == null)
                 originBitmap = getDrawingCache(true);
@@ -285,35 +283,5 @@ public class RippleView extends RelativeLayout
 
     public void setRippleAnimationListener(RippleAnimationListener rippleAnimationListener) {
         this.mAnimationListener = rippleAnimationListener;
-    }
-
-    /**
-     * Every 50 milliseconds check for the animation to be finished. Otherwise finish in about 2sec (40 * 50milliseconds)
-     */
-    private class AnimationListenerAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        private static final int TO_TWO_SECONDS = 40;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            int numberOfTry = 0;
-            do {
-                numberOfTry++;
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    Log.e(TAG, e.toString());
-                }
-            } while (animationRunning || numberOfTry >= TO_TWO_SECONDS);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if(mAnimationListener != null) {
-                mAnimationListener.onAnimationEnd();
-            }
-        }
     }
 }
