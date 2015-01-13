@@ -36,10 +36,9 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 /**
@@ -149,13 +148,6 @@ public class RippleView extends RelativeLayout
 
         this.setDrawingCacheEnabled(true);
         this.setClickable(true);
-    }
-
-    @Override
-    public void addView(View child, int index, ViewGroup.LayoutParams params)
-    {
-        childView = child;
-        super.addView(child, index, params);
     }
 
     @Override
