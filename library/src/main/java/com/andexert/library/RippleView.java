@@ -71,11 +71,10 @@ public class RippleView extends RelativeLayout
     private Paint paint;
     private Bitmap originBitmap;
     private int rippleColor;
-    private View childView;
     private int ripplePadding;
     private GestureDetector gestureDetector;
     private RippleAnimationListener mAnimationListener;
-    private Runnable runnable = new Runnable()
+    private final Runnable runnable = new Runnable()
     {
         @Override
         public void run()
@@ -128,6 +127,14 @@ public class RippleView extends RelativeLayout
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener()
         {
             @Override
+            public void onLongPress(MotionEvent event)
+            {
+                super.onLongPress(event);
+                animateRipple(event);
+                sendClickEvent(true);
+            }
+
+            @Override
             public boolean onSingleTapConfirmed(MotionEvent e)
             {
                 return true;
@@ -141,6 +148,7 @@ public class RippleView extends RelativeLayout
         });
 
         this.setDrawingCacheEnabled(true);
+        this.setClickable(true);
     }
 
     @Override
@@ -220,10 +228,19 @@ public class RippleView extends RelativeLayout
         scaleAnimation.setRepeatCount(1);
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event)
+    public void animateRipple(MotionEvent event)
     {
-        if (gestureDetector.onTouchEvent(event) && !animationRunning)
+        createAnimation(event.getX(), event.getY());
+    }
+
+    public void animateRipple(final float x, final float y)
+    {
+        createAnimation(x, y);
+    }
+
+    private void createAnimation(final float x, final float y)
+    {
+        if (!animationRunning)
         {
             if (hasToZoom)
                 this.startAnimation(scaleAnimation);
@@ -242,8 +259,8 @@ public class RippleView extends RelativeLayout
             }
             else
             {
-                this.x = event.getX();
-                this.y = event.getY();
+                this.x = x;
+                this.y = y;
             }
 
             animationRunning = true;
@@ -252,17 +269,45 @@ public class RippleView extends RelativeLayout
                 originBitmap = getDrawingCache(true);
 
             invalidate();
-            this.performClick();
         }
+    }
 
-        childView.onTouchEvent(event);
-        return true;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        if (gestureDetector.onTouchEvent(event))
+        {
+            animateRipple(event);
+            sendClickEvent(false);
+        }
+        return super.onTouchEvent(event);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event)
     {
-       return true;
+        this.onTouchEvent(event);
+        return super.onInterceptTouchEvent(event);
+    }
+
+    private void sendClickEvent(final Boolean isLongClick)
+    {
+        if (getParent() instanceof ListView)
+        {
+            final int position = ((ListView) getParent()).getPositionForView(this);
+            final long id = ((ListView) getParent()).getItemIdAtPosition(position);
+            if (isLongClick)
+            {
+                if (((ListView) getParent()).getOnItemLongClickListener() != null)
+                    ((ListView) getParent()).getOnItemLongClickListener().onItemLongClick(((ListView) getParent()), this, position, id);
+            }
+            else
+            {
+                if (((ListView) getParent()).getOnItemClickListener() != null)
+                    ((ListView) getParent()).getOnItemClickListener().onItemClick(((ListView) getParent()), this, position, id);
+            }
+        }
     }
 
     private Bitmap getCircleBitmap(final int radius) {
