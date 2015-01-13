@@ -44,7 +44,7 @@ uploadArchives {
             //com.github.traex.rippleeffect:library:1.2.3
             pom.groupId = 'com.github.traex.rippleeffect'
             pom.artifactId = 'ripple'
-            pom.version = '1.2.2'
+            pom.version = '1.2.3'
         }
     }
 }
