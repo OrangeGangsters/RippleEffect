@@ -133,6 +133,11 @@ public class RippleView extends RelativeLayout {
             public boolean onSingleTapUp(MotionEvent e) {
                 return true;
             }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                return true;
+            }
         });
 
         this.setDrawingCacheEnabled(true);
