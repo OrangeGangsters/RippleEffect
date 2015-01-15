@@ -159,7 +159,7 @@ public class RippleView extends RelativeLayout
             if (DURATION <= timer * FRAME_RATE)
             {
                 if(mAnimationListener != null) {
-                    mAnimationListener.onAnimationEnd();
+                    mAnimationListener.onRippleAnimationEnd();
                 }
                 animationRunning = false;
                 timer = 0;
