@@ -41,10 +41,9 @@ uploadArchives {
         mavenDeployer {
             repository(url: uri("../../omada-nexus/release"))
             snapshotRepository(url: uri("../../omada-nexus/release"))
-            //com.github.traex.rippleeffect:library:1.2.3
             pom.groupId = 'com.github.traex.rippleeffect'
             pom.artifactId = 'ripple'
-            pom.version = '1.2.3.2-OG'
+            pom.version = '1.3.1-OG'
         }
     }
 }
