@@ -194,8 +194,10 @@ public class RippleView extends RelativeLayout {
                 timer++;
             }
         } catch (RuntimeException e) {
-            if (mAnimationListener != null) {
-                mAnimationListener.onRippleAnimationEnd();
+            if (animationRunning) {
+                if (mAnimationListener != null) {
+                    mAnimationListener.onRippleAnimationEnd();
+                }
             }
         }
     }
